@@ -34,7 +34,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
     
-    - name: Trivy Sacnning
+    - name: Docker Image Scan using Trivy
       run: trivy image ${{ env.ecr_repo_url }}:${{ env.release_tag }}
       #trivy image --exit-code 1 --severity HIGH,CRITICAL ${{ env.ecr_repo_url }}:${{ env.release_tag }}
 
