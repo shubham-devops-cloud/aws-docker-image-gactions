@@ -43,4 +43,4 @@ jobs:
     
     - name: Push docker image
       run: |
-          docker push dev-or-employee-system:github-actions-image
+          docker push public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
