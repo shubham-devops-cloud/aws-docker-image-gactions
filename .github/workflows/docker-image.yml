@@ -26,4 +26,5 @@ jobs:
           pwd
           ls -la
           docker images
+          brew install trivy
           trivy --version
