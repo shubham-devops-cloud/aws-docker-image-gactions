@@ -35,4 +35,5 @@ jobs:
     
     - name: Handle Failure
       if: steps.trivy.outcome == 'failure'
-      run: echo "Custom message: Trivy scan detected high or critical vulnerabilities."
+      run: |
+        echo "Trivy scan detected high or critical vulnerabilities. Please fix them."
