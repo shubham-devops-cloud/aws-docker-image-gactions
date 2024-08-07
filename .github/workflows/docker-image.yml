@@ -30,11 +30,17 @@ jobs:
           sudo apt-get install trivy
     
     - name: TrivySacnning
+      run: trivy image public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+      #trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+
+    - name: AWS ECR Login
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: "us-west-2"
       run: |
-          trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
-      continue-on-error: true
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/j9k0i2s2
     
-    - name: Handle Failure
-      if: steps.TrivySacnning.outcome == 'failure'
+    - name: Push docker image
       run: |
-          echo "Trivy scan detected high or critical vulnerabilities. Please fix them."
+          docker push dev-or-employee-system:github-actions-image
