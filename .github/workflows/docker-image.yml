@@ -12,9 +12,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: test
       run: |
           pwd
           ls -la
-    # - name: Build the Docker image
-    #   run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+
+    - name: Build the Docker image
+      run: docker build . -f Dockerfile -t public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+
+    - name: demo
+      run: |
+          pwd
+          ls -la
+          docker images
+          trivy --version
