@@ -11,9 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout GitHub Repo
+      uses: actions/checkout@v4
     
-    - name: ReleaseTag and ECR Repo Details
+    - name: ReleaseTag Detailss
       run: |
           release_tag=$(grep '^releaseTag=' releaseTag.md | cut -d '=' -f 2)
           ecr_repo_url=$(grep '^ecrRepoUrl=' releaseTag.md | cut -d '=' -f 2)
@@ -22,31 +23,31 @@ jobs:
           echo "ecr_repo_url=$ecr_repo_url" >> $GITHUB_ENV
 
           ehco "Release Tag: $release_tag"
-          ech0 "ECR Repo URL: $ecr_repo_url"
+          echo "ECR Repo URL: $ecr_repo_url"
 
     - name: Build the Docker image
       run: docker build . -f Dockerfile -t ${{ env.ecr_repo_url }}:${{ env.release_tag }}
 
-    # - name: Trivy Install
-    #   run: |
-    #       sudo apt-get install wget apt-transport-https gnupg lsb-release
-    #       wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-    #       echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    #       sudo apt-get update
-    #       sudo apt-get install trivy
+    - name: Trivy Install
+      run: |
+          sudo apt-get install wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install trivy
     
-    # - name: TrivySacnning
-    #   run: trivy image public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
-    #   #trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+    - name: TrivySacnning
+      run: trivy image ${{ env.ecr_repo_url }}:${{ env.release_tag }}
+      #trivy image --exit-code 1 --severity HIGH,CRITICAL ${{ env.ecr_repo_url }}:${{ env.release_tag }}
 
-    # - name: AWS ECR Login
-    #   env:
-    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #     AWS_REGION: "us-west-2"
-    #   run: |
-    #       aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/j9k0i2s2
+    - name: AWS ECR Login
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: "us-west-2"
+      run: |
+          aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/j9k0i2s2
     
-    # - name: Push docker image
-    #   run: |
-    #       docker push public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+    - name: Push docker image
+      run: |
+          docker push ${{ env.ecr_repo_url }}:${{ env.release_tag }}
