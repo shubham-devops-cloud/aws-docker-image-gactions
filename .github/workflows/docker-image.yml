@@ -22,7 +22,7 @@ jobs:
           echo "release_tag=$release_tag" >> $GITHUB_ENV
           echo "ecr_repo_url=$ecr_repo_url" >> $GITHUB_ENV
 
-          ehco "Release Tag: $release_tag"
+          echo "Release Tag: $release_tag"
           echo "ECR Repo URL: $ecr_repo_url"
 
     - name: Build the Docker image
