@@ -26,5 +26,4 @@ jobs:
           pwd
           ls -la
           docker images
-          brew install trivy
-          trivy --version
+          trivy image public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
