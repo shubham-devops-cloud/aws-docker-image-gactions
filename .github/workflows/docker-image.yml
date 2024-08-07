@@ -1,13 +1,11 @@
-name: Docker Image CI
+name: Docker Image Build
 
 on:
   pull_request:
     branches: [ "main" ]
 
 jobs:
-
-  build:
-
+  DockerImageBuild:
     runs-on: ubuntu-latest
 
     steps:
