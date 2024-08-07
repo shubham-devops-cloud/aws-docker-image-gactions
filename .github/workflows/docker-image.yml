@@ -32,6 +32,7 @@ jobs:
     - name: TrivySacnning
       run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+      continue-on-error: true
     
     - name: Handle Failure
       if: steps.TrivySacnning.outcome == 'failure'
