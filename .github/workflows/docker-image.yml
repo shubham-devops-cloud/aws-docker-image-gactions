@@ -21,13 +21,7 @@ jobs:
     - name: Build the Docker image
       run: docker build . -f Dockerfile -t public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
 
-    - name: demo
-      run: |
-          pwd
-          ls -la
-          docker images
-
-    - name: trivy
+    - name: Trivy Install
       run: |
           sudo apt-get install wget apt-transport-https gnupg lsb-release
           wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
@@ -35,6 +29,10 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
     
-    - name: trivy
+    - name: Trivy Sacnning
       run: |
-          trivy image public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+          trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
+    
+    - name: Handle Failure
+          if: steps.trivy.outcome == 'failure'
+          run: echo "Custom message: Trivy scan detected high or critical vulnerabilities."
