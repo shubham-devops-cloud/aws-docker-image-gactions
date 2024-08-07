@@ -29,11 +29,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install trivy
     
-    - name: Trivy Sacnning
+    - name: TrivySacnning
       run: |
           trivy image --exit-code 1 --severity HIGH,CRITICAL public.ecr.aws/j9k0i2s2/dev-or-employee-system:github-actions-image
     
     - name: Handle Failure
-      if: steps.trivy.outcome == 'failure'
+      if: steps.TrivySacnning.outcome == 'failure'
       run: |
           echo "Trivy scan detected high or critical vulnerabilities. Please fix them."
